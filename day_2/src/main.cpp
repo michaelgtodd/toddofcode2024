@@ -8,15 +8,34 @@
 
 using namespace nlohmann;
 
-
-std::list<int>::iterator evaluate_report (std::list<int>::iterator begin, std::list<int>::iterator end)
+std::list<int>::iterator next_with_skip (std::list<int>::iterator i, std::list<int>::iterator skip)
 {
-    auto bad_report = end;
+    std::list<int>::iterator next = std::next(i);
+    if (next != skip)
+    {
+        return next;
+    }
+    return std::next(next);
+}
+
+std::list<int>::iterator prev_with_skip (std::list<int>::iterator i, std::list<int>::iterator skip)
+{
+    std::list<int>::iterator prev = std::prev(i);
+    if (prev != skip)
+    {
+        return prev;
+    }
+    return std::prev(prev);
+}
+
+bool evaluate_report (std::list<int>::iterator begin, std::list<int>::iterator end, std::list<int>::iterator skip_iter = std::list<int>::iterator(NULL))
+{
+    bool passed = true;
     bool increasing = false;
 
-    for (auto j = begin; j != end && bad_report == end; j++)
+    for (auto j = begin; j != end && passed == true; j = next_with_skip(j, skip_iter))
     {
-        auto k = std::next(j);
+        auto k = next_with_skip(j, skip_iter);
 
         if (j == begin)
         {
@@ -38,32 +57,32 @@ std::list<int>::iterator evaluate_report (std::list<int>::iterator begin, std::l
             continue;
         }
         
-        auto l = std::prev(j);
+        auto l = prev_with_skip(j, skip_iter);
 
         if (*l == *j)
         {
-            bad_report = j;
+            passed = false;
             continue;
         }
 
         if (std::abs(*l - *j) > 3)
         {
-            bad_report = j;
+            passed = false;
             continue;
         }
         if (increasing && *l > *j)
         {
-            bad_report = j;
+            passed = false;
             continue;
         }
         if (!increasing && *l < *j)
         {
-            bad_report = j;
+            passed = false;
             continue;
         }
     }
 
-    return bad_report;
+    return passed;
 }
 
 std::list<int> remove_iterator(std::list<int> &list, std::list<int>::iterator remove)
@@ -93,7 +112,7 @@ int main (int argc, char* argv[])
 
         for(auto i : list)
         {   
-            if (evaluate_report(i.begin(), i.end()) == i.end())
+            if (evaluate_report(i.begin(), i.end()))
             {
                 passed_reports++;
             }
@@ -105,23 +124,27 @@ int main (int argc, char* argv[])
 
     {
         int passed_reports = 0;
-        int number = 0;
 
         for(auto i : list)
         {   
-            number ++;
-            auto bad_report = evaluate_report(i.begin(), i.end());
-            if (bad_report == i.end())
+            if (evaluate_report(i.begin(), i.end()))
             {
                 passed_reports++;
                 continue;
             }
             else
             {
-                for (auto iter = i.begin(); iter != i.end(); iter++)
+                for (auto skip_iter = i.begin(); skip_iter != i.end(); skip_iter++)
                 {
-                    std::list<int> temp = remove_iterator(i, iter);
-                    if(evaluate_report(temp.begin(), temp.end()) == temp.end())
+                    if (skip_iter == i.begin())
+                    {
+                        if(evaluate_report(std::next(i.begin()), i.end()))
+                        {
+                            passed_reports ++;
+                            break;
+                        }
+                    }
+                    if(evaluate_report(i.begin(), i.end(), skip_iter))
                     {
                         passed_reports ++;
                         break;
