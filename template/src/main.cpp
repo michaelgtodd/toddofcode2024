@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <chrono>
 
 #include <nlohmann/json.hpp>
 
@@ -31,7 +32,7 @@ int main (int argc, char* argv[])
         part_one_seconds = std::chrono::duration_cast<std::chrono::microseconds>(part_one_end - part_one_begin).count() / 1000000.0;
 
         p1_value = 0;
-        
+
     } // END PART ONE
 
     { // PART TWO
