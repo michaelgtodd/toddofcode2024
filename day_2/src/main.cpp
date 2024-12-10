@@ -116,7 +116,7 @@ int main (int argc, char* argv[])
     int p1_value = 0;
     int p2_value = 0;
 
-    {
+    { // PART ONE
         auto part_one_begin = std::chrono::steady_clock::now();
         int passed_reports = 0;
 
@@ -132,9 +132,10 @@ int main (int argc, char* argv[])
         part_one_seconds = std::chrono::duration_cast<std::chrono::microseconds>(part_one_end - part_one_begin).count() / 1000000.0;
 
         p1_value = passed_reports;
-    }
+    } // PART ONE END
 
-    {
+
+    { // PART TWO
         auto part_two_begin = std::chrono::steady_clock::now();
         int passed_reports = 0;
 
@@ -171,7 +172,7 @@ int main (int argc, char* argv[])
 
         p2_value = passed_reports;
 
-    }
+    } // PART TWO END
 
     auto total_end = std::chrono::steady_clock::now();
     float total_seconds = std::chrono::duration_cast<std::chrono::microseconds>(total_end - total_begin).count() / 1000000.0;
